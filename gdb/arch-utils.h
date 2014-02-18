@@ -174,4 +174,10 @@ extern int default_return_in_first_hidden_param_p (struct gdbarch *,
 extern int default_insn_is_call (struct gdbarch *, CORE_ADDR);
 extern int default_insn_is_ret (struct gdbarch *, CORE_ADDR);
 extern int default_insn_is_jump (struct gdbarch *, CORE_ADDR);
+
+int default_ptr_bit_in_space (struct gdbarch *, struct type *);
+int default_ptr_byte_in_space (struct gdbarch *, struct type *);
+int default_addr_bit_in_space (struct gdbarch *, struct type *);
+int default_addr_byte_in_space (struct gdbarch *, struct type *);
+
 #endif

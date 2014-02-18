@@ -819,6 +819,46 @@ int default_insn_is_jump (struct gdbarch *gdbarch, CORE_ADDR addr)
   return 0;
 }
 
+/* The default values of ptr_bit_in_space and addr_bit_in_space are that of the
+   original ptr_bit and addr_bit defined by each supported architecture. These
+   functions should be overriden by architectures requiring a special number of
+   bits to represent a pointer of a given type. */
+
+int
+default_ptr_bit_in_space (struct gdbarch *gdbarch, struct type *type)
+{
+  return gdbarch_ptr_bit (gdbarch);
+}
+
+/* Round up the number of bytes. */
+
+int
+default_ptr_byte_in_space (struct gdbarch *gdbarch, struct type *type)
+{
+  if ((gdbarch_ptr_bit (gdbarch) & 0x7) == 0)
+    return gdbarch_ptr_bit (gdbarch) / 8;
+  else
+    return (gdbarch_ptr_bit (gdbarch) >> 3) + 1;
+}
+
+int
+default_addr_bit_in_space (struct gdbarch *gdbarch, struct type *type)
+{
+  return gdbarch_addr_bit (gdbarch);
+}
+
+/* Round up the number of bytes. */
+
+int
+default_addr_byte_in_space (struct gdbarch *gdbarch, struct type *type)
+{
+  if ((gdbarch_addr_bit (gdbarch) & 0x7) == 0)
+    return gdbarch_addr_bit (gdbarch) / 8;
+  else
+    return (gdbarch_addr_bit (gdbarch) >> 3) + 1;
+}
+
+
 /* */
 
 /* -Wmissing-prototypes */

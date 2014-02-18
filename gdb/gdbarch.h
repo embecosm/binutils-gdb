@@ -58,6 +58,7 @@ struct axs_value;
 struct stap_parse_info;
 struct ravenscar_arch_ops;
 struct elf_internal_linux_prpsinfo;
+struct type;
 
 /* The architecture associated with the inferior through the
    connection to the target.
@@ -186,6 +187,26 @@ extern void set_gdbarch_ptr_bit (struct gdbarch *gdbarch, int ptr_bit);
 
 extern int gdbarch_addr_bit (struct gdbarch *gdbarch);
 extern void set_gdbarch_addr_bit (struct gdbarch *gdbarch, int addr_bit);
+
+/*  For some targets, a pointers on the target may have different representations
+    depending on their types. Calling these functions with a NULL type will
+    return the appropriate maximum pointer size. */
+
+typedef int (gdbarch_ptr_bit_in_space_ftype) (struct gdbarch *gdbarch, struct type *type);
+extern int gdbarch_ptr_bit_in_space (struct gdbarch *gdbarch, struct type *type);
+extern void set_gdbarch_ptr_bit_in_space (struct gdbarch *gdbarch, gdbarch_ptr_bit_in_space_ftype *ptr_bit_in_space);
+
+typedef int (gdbarch_ptr_byte_in_space_ftype) (struct gdbarch *gdbarch, struct type *type);
+extern int gdbarch_ptr_byte_in_space (struct gdbarch *gdbarch, struct type *type);
+extern void set_gdbarch_ptr_byte_in_space (struct gdbarch *gdbarch, gdbarch_ptr_byte_in_space_ftype *ptr_byte_in_space);
+
+typedef int (gdbarch_addr_bit_in_space_ftype) (struct gdbarch *gdbarch, struct type *type);
+extern int gdbarch_addr_bit_in_space (struct gdbarch *gdbarch, struct type *type);
+extern void set_gdbarch_addr_bit_in_space (struct gdbarch *gdbarch, gdbarch_addr_bit_in_space_ftype *addr_bit_in_space);
+
+typedef int (gdbarch_addr_byte_in_space_ftype) (struct gdbarch *gdbarch, struct type *type);
+extern int gdbarch_addr_byte_in_space (struct gdbarch *gdbarch, struct type *type);
+extern void set_gdbarch_addr_byte_in_space (struct gdbarch *gdbarch, gdbarch_addr_byte_in_space_ftype *addr_byte_in_space);
 
 /* dwarf2_addr_size is the target address size as used in the Dwarf debug
    info.  For .debug_frame FDEs, this is supposed to be the target address

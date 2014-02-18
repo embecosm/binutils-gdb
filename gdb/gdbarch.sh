@@ -397,6 +397,13 @@ v:int:ptr_bit:::8 * sizeof (void*):gdbarch->int_bit::0
 # addr_bit is the size of a target address as represented in gdb
 v:int:addr_bit:::8 * sizeof (void*):0:gdbarch_ptr_bit (gdbarch):
 #
+#  For some targets, a pointers on the target may have different representations
+#  depending on their types. Calling these functions with a NULL type will
+#  return the appropriate maximum pointer size.
+m:int:ptr_bit_in_space:struct type *type:type:default_ptr_bit_in_space:default_ptr_bit_in_space::0
+m:int:ptr_byte_in_space:struct type *type:type:default_ptr_byte_in_space:default_ptr_byte_in_space::0
+m:int:addr_bit_in_space:struct type *type:type:default_addr_bit_in_space:default_addr_bit_in_space::0
+m:int:addr_byte_in_space:struct type *type:type:default_addr_byte_in_space:default_addr_byte_in_space::0
 # dwarf2_addr_size is the target address size as used in the Dwarf debug
 # info.  For .debug_frame FDEs, this is supposed to be the target address
 # size from the associated CU header, and which is equivalent to the
@@ -1141,6 +1148,7 @@ struct axs_value;
 struct stap_parse_info;
 struct ravenscar_arch_ops;
 struct elf_internal_linux_prpsinfo;
+struct type;
 
 /* The architecture associated with the inferior through the
    connection to the target.
