@@ -188,21 +188,70 @@ extern void set_gdbarch_ptr_bit (struct gdbarch *gdbarch, int ptr_bit);
 extern int gdbarch_addr_bit (struct gdbarch *gdbarch);
 extern void set_gdbarch_addr_bit (struct gdbarch *gdbarch, int addr_bit);
 
-/*  For some targets, a pointers on the target may have different representations
-    depending on their types. Calling these functions with a NULL type will
-    return the appropriate maximum pointer size. */
+/* Adding support for multi-address space architectures to GDB.
+  
+   Current state of things:
+  
+   GDB gives special meanings to addresses and pointers. A pointer refers to a
+   physical address on the target, and an address refers to the internal
+   representation in GDB.
+  
+   Because GDB needs a unified address space internaly, we use high bits to
+   indicate on which memory space the pointer resides.
+  
+   For example, on the AVR architecture we have three address spaces:
+     pointer 0x0 - 0x3fffff in Flash  -> address      0x0 - 0x7fffff
+     pointer 0x0 -   0xffff in SRAM   -> address 0x800000 - 0x80ffff
+     pointer 0x0 -   0xffff in EEPROM -> address 0x810000 - 0x81ffff
+  
+   gdbarch_pointer_to_address and gdbarch_address_to_pointer perform the
+   conversion.
+  
+   Work in progress:
+  
+   Using gdbarch_ptr_bit tells GDB that all pointers have the same size on the
+   target, regardless of their address space. And the same goes on for
+   gdbarch_addr_bit and addresses.
+  
+   The following functions replace gdbarch_ptr_bit and gdbarch_addr_bit:
+     gdbarch_ptr_bit_in_space
+     gdbarch_ptr_byte_in_space
+     gdbarch_addr_bit_in_space
+     gdbarch_addr_byte_in_space
+  
+   They should be overriden to act just like gdbarch_ptr_bit and
+   gdbarch_addr_bit. However, if the target has more than one address space, the
+   space in which the pointer resides should be infered from the struct type
+   argument. And then return the size of the specific space. Calling any of
+   these with NULL_TYPE will return the appropriate maximum pointer size.
+  
+   Byte variants were added to make code cleaner, as the result of
+   gdbarch_ptr_bit_in_space and gdbarch_addr_bit_in_space is very often used as
+   a number of bytes instead of bits.
+  
+   Return the number of bits of pointers for a specific address space, according
+   to type. */
 
 typedef int (gdbarch_ptr_bit_in_space_ftype) (struct gdbarch *gdbarch, struct type *type);
 extern int gdbarch_ptr_bit_in_space (struct gdbarch *gdbarch, struct type *type);
 extern void set_gdbarch_ptr_bit_in_space (struct gdbarch *gdbarch, gdbarch_ptr_bit_in_space_ftype *ptr_bit_in_space);
 
+/* gdbarch_ptr_byte_in_space should return the number of bytes into which the
+   pointer can fit in. */
+
 typedef int (gdbarch_ptr_byte_in_space_ftype) (struct gdbarch *gdbarch, struct type *type);
 extern int gdbarch_ptr_byte_in_space (struct gdbarch *gdbarch, struct type *type);
 extern void set_gdbarch_ptr_byte_in_space (struct gdbarch *gdbarch, gdbarch_ptr_byte_in_space_ftype *ptr_byte_in_space);
 
+/* Return the number of bits of addresses for a specific address space, according
+   to type. */
+
 typedef int (gdbarch_addr_bit_in_space_ftype) (struct gdbarch *gdbarch, struct type *type);
 extern int gdbarch_addr_bit_in_space (struct gdbarch *gdbarch, struct type *type);
 extern void set_gdbarch_addr_bit_in_space (struct gdbarch *gdbarch, gdbarch_addr_bit_in_space_ftype *addr_bit_in_space);
+
+/* gdbarch_addr_byte_in_space should return the number of bytes into which the
+   address can fit in. */
 
 typedef int (gdbarch_addr_byte_in_space_ftype) (struct gdbarch *gdbarch, struct type *type);
 extern int gdbarch_addr_byte_in_space (struct gdbarch *gdbarch, struct type *type);
