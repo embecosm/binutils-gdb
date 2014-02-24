@@ -190,28 +190,40 @@ extern void set_gdbarch_addr_bit (struct gdbarch *gdbarch, int addr_bit);
 
 /* Adding support for multi-address space architectures to GDB.
   
-   Current state of things:
-  
    GDB gives special meanings to addresses and pointers. A pointer refers to a
-   physical address on the target, and an address refers to the internal
-   representation in GDB.
+   physical address on the target, and an address refers to its internal
+   representation in GDB. This representation is byte addressed and in a single
+   address space whereas pointers depend entirely on the target. They are not
+   necessarily byte addresses and could have several address spaces.
   
-   Because GDB needs a unified address space internaly, we use high bits to
+   Because GDB needs this unified address space internaly, we use high bits to
    indicate on which memory space the pointer resides.
   
    For example, on the AVR architecture we have three address spaces:
-     pointer 0x0 - 0x3fffff in Flash  -> address      0x0 - 0x7fffff
-     pointer 0x0 -   0xffff in SRAM   -> address 0x800000 - 0x80ffff
-     pointer 0x0 -   0xffff in EEPROM -> address 0x810000 - 0x81ffff
+  
+     Pointers:                                 Addresses:
+  
+     space |addressed by  |range               addressed by |range
+     ------+--------------+--------------      -------------+-------------------
+     Flash |word (16 bits)|0x0 - 0x3fffff  ->  byte (8 bits)|     0x0 - 0x7ffffe
+     SRAM  |byte (8 bits) |0x0 -   0xffff  ->  byte (8 bits)|0x800000 - 0x80ffff
+     EEPROM|byte (8 bits) |0x0 -   0xffff  ->  byte (8 bits)|0x810000 - 0x81ffff
   
    gdbarch_pointer_to_address and gdbarch_address_to_pointer perform the
    conversion.
   
-   Work in progress:
-  
    Using gdbarch_ptr_bit tells GDB that all pointers have the same size on the
-   target, regardless of their address space. And the same goes on for
-   gdbarch_addr_bit and addresses.
+   target, regardless of their address space.
+  
+   Regarding addresses, it might be thought that they always have the same size,
+   but gdbarch_addr_bit is used for two purposes. First to say how many bits are
+   needed to address the whole unified address space and secondly to say how many
+   bits should be used when displaying an address. In this latter case the number
+   of bits matters.
+  
+   For example on AVR with its 16-bit byte addressed data space and 22-bit word
+   addressed code space, the number of bits to print out a pointer to data (16)
+   is different to the number to print out a pointer to a function (22).
   
    The following functions replace gdbarch_ptr_bit and gdbarch_addr_bit:
      gdbarch_ptr_bit_in_space
