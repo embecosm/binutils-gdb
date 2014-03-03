@@ -819,6 +819,19 @@ int default_insn_is_jump (struct gdbarch *gdbarch, CORE_ADDR addr)
   return 0;
 }
 
+int
+default_ptr_bit_in_space (struct gdbarch *gdbarch, struct type *type)
+{
+  return gdbarch_ptr_bit (gdbarch);
+}
+
+int
+default_ptr_byte_in_space (struct gdbarch *gdbarch, struct type *type)
+{
+  int bits = gdbarch_ptr_bit (gdbarch);
+  return (bits + TARGET_CHAR_BIT - 1) / TARGET_CHAR_BIT;
+}
+
 /* */
 
 /* -Wmissing-prototypes */

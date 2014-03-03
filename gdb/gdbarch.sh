@@ -396,7 +396,57 @@ v:const struct floatformat **:long_double_format:::::floatformats_ieee_double::p
 v:int:ptr_bit:::8 * sizeof (void*):gdbarch->int_bit::0
 # addr_bit is the size of a target address as represented in gdb
 v:int:addr_bit:::8 * sizeof (void*):0:gdbarch_ptr_bit (gdbarch):
+# Adding support for multi-address space architectures to GDB.
 #
+# GDB gives special meanings to addresses and pointers. A pointer refers to a
+# physical address on the target, and an address refers to its internal
+# representation in GDB. This representation is byte addressed and in a single
+# address space whereas pointers depend entirely on the target. They are not
+# necessarily byte addresses and could have several address spaces.
+#
+# Because GDB needs this unified address space internaly, we use high bits to
+# indicate on which memory space the pointer resides.
+#
+# For example, on the AVR architecture we have three address spaces:
+#
+#   Pointers:                                 Addresses:
+#
+#   space |addressed by  |range               addressed by |range
+#   ------+--------------+--------------      -------------+-------------------
+#   Flash |word (16 bits)|0x0 - 0x3fffff  ->  byte (8 bits)|     0x0 - 0x7ffffe
+#   SRAM  |byte (8 bits) |0x0 -   0xffff  ->  byte (8 bits)|0x800000 - 0x80ffff
+#   EEPROM|byte (8 bits) |0x0 -   0xffff  ->  byte (8 bits)|0x810000 - 0x81ffff
+#
+# gdbarch_pointer_to_address and gdbarch_address_to_pointer perform the
+# conversion.
+#
+# Using gdbarch_ptr_bit tells GDB that all pointers have the same size on the
+# target, regardless of their address space.
+#
+# For example on AVR with its 16-bit byte addressed data space and 22-bit word
+# addressed code space, the number of bits to print out a pointer to data (16)
+# is different to the number to print out a pointer to a function (22).
+#
+# The following functions replace gdbarch_ptr_bit:
+#   gdbarch_ptr_bit_in_space
+#   gdbarch_ptr_byte_in_space
+#
+# They should be overriden to act just like gdbarch_ptr_bit. However, if the
+# target has more than one address space, the space in which the pointer resides
+# should be infered from the struct type argument. And then return the size of
+# the specific space. Calling any of these with NULL_TYPE will return the
+# appropriate maximum pointer size.
+#
+# A byte variant was added to make code cleaner, as the result of
+# gdbarch_ptr_bit_in_space is very often used as a number of bytes instead of
+# bits.
+#
+# Return the number of bits of pointers for a specific address space, according
+# to type.
+m:int:ptr_bit_in_space:struct type *type:type:default_ptr_bit_in_space:default_ptr_bit_in_space::0
+# gdbarch_ptr_byte_in_space should return the number of bytes into which the
+# pointer can fit in.
+m:int:ptr_byte_in_space:struct type *type:type:default_ptr_byte_in_space:default_ptr_byte_in_space::0
 # dwarf2_addr_size is the target address size as used in the Dwarf debug
 # info.  For .debug_frame FDEs, this is supposed to be the target address
 # size from the associated CU header, and which is equivalent to the
@@ -1141,6 +1191,7 @@ struct axs_value;
 struct stap_parse_info;
 struct ravenscar_arch_ops;
 struct elf_internal_linux_prpsinfo;
+struct type;
 
 /* The architecture associated with the inferior through the
    connection to the target.
