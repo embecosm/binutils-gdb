@@ -175,13 +175,12 @@ extern int default_insn_is_call (struct gdbarch *, CORE_ADDR);
 extern int default_insn_is_ret (struct gdbarch *, CORE_ADDR);
 extern int default_insn_is_jump (struct gdbarch *, CORE_ADDR);
 
-/* The default values of ptr_bit_in_space and addr_bit_in_space are that of the
-   original ptr_bit and addr_bit defined by each supported architecture. These
-   functions may be overriden by architectures requiring a special number of
-   bits to represent a pointer of a given type.
+/* The default values of ptr_bit_in_space is that of the original ptr_bit
+ * defined by each supported architecture. This function may be
+   overriden by architectures requiring a special number of bits to represent a
+   pointer of a given type.
 
-   See gdbarch.c for an in depth explanation of ptr_bit_in_space and
-   addr_bit_in_space.
+   See gdbarch.c for an in depth explanation of ptr_bit_in_space.
    */
 
 int default_ptr_bit_in_space (struct gdbarch *, struct type *);
@@ -189,16 +188,5 @@ int default_ptr_bit_in_space (struct gdbarch *, struct type *);
 /* Round up the number of bytes from gdbarch_ptr_bit. */
 
 int default_ptr_byte_in_space (struct gdbarch *, struct type *);
-
-/*
-   See gdbarch.c for an in depth explanation of ptr_bit_in_space and
-   addr_bit_in_space.
-   */
-
-int default_addr_bit_in_space (struct gdbarch *, struct type *);
-
-/* Round up the number of bytes from gdbarch_addr_bit. */
-
-int default_addr_byte_in_space (struct gdbarch *, struct type *);
 
 #endif

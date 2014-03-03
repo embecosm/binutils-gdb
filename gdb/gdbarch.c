@@ -182,8 +182,6 @@ struct gdbarch
   int addr_bit;
   gdbarch_ptr_bit_in_space_ftype *ptr_bit_in_space;
   gdbarch_ptr_byte_in_space_ftype *ptr_byte_in_space;
-  gdbarch_addr_bit_in_space_ftype *addr_bit_in_space;
-  gdbarch_addr_byte_in_space_ftype *addr_byte_in_space;
   int dwarf2_addr_size;
   int char_signed;
   gdbarch_read_pc_ftype *read_pc;
@@ -365,8 +363,6 @@ gdbarch_alloc (const struct gdbarch_info *info,
   gdbarch->ptr_bit = gdbarch->int_bit;
   gdbarch->ptr_bit_in_space = default_ptr_bit_in_space;
   gdbarch->ptr_byte_in_space = default_ptr_byte_in_space;
-  gdbarch->addr_bit_in_space = default_addr_bit_in_space;
-  gdbarch->addr_byte_in_space = default_addr_byte_in_space;
   gdbarch->char_signed = -1;
   gdbarch->virtual_frame_pointer = legacy_virtual_frame_pointer;
   gdbarch->num_regs = -1;
@@ -496,8 +492,6 @@ verify_gdbarch (struct gdbarch *gdbarch)
     gdbarch->addr_bit = gdbarch_ptr_bit (gdbarch);
   /* Skip verify of ptr_bit_in_space, invalid_p == 0 */
   /* Skip verify of ptr_byte_in_space, invalid_p == 0 */
-  /* Skip verify of addr_bit_in_space, invalid_p == 0 */
-  /* Skip verify of addr_byte_in_space, invalid_p == 0 */
   if (gdbarch->dwarf2_addr_size == 0)
     gdbarch->dwarf2_addr_size = gdbarch_ptr_bit (gdbarch) / TARGET_CHAR_BIT;
   if (gdbarch->char_signed == -1)
@@ -667,14 +661,8 @@ gdbarch_dump (struct gdbarch *gdbarch, struct ui_file *file)
                       "gdbarch_dump: addr_bit = %s\n",
                       plongest (gdbarch->addr_bit));
   fprintf_unfiltered (file,
-                      "gdbarch_dump: addr_bit_in_space = <%s>\n",
-                      host_address_to_string (gdbarch->addr_bit_in_space));
-  fprintf_unfiltered (file,
                       "gdbarch_dump: addr_bits_remove = <%s>\n",
                       host_address_to_string (gdbarch->addr_bits_remove));
-  fprintf_unfiltered (file,
-                      "gdbarch_dump: addr_byte_in_space = <%s>\n",
-                      host_address_to_string (gdbarch->addr_byte_in_space));
   fprintf_unfiltered (file,
                       "gdbarch_dump: gdbarch_address_class_name_to_type_flags_p() = %d\n",
                       gdbarch_address_class_name_to_type_flags_p (gdbarch));
@@ -1682,40 +1670,6 @@ set_gdbarch_ptr_byte_in_space (struct gdbarch *gdbarch,
                                gdbarch_ptr_byte_in_space_ftype ptr_byte_in_space)
 {
   gdbarch->ptr_byte_in_space = ptr_byte_in_space;
-}
-
-int
-gdbarch_addr_bit_in_space (struct gdbarch *gdbarch, struct type *type)
-{
-  gdb_assert (gdbarch != NULL);
-  gdb_assert (gdbarch->addr_bit_in_space != NULL);
-  if (gdbarch_debug >= 2)
-    fprintf_unfiltered (gdb_stdlog, "gdbarch_addr_bit_in_space called\n");
-  return gdbarch->addr_bit_in_space (gdbarch, type);
-}
-
-void
-set_gdbarch_addr_bit_in_space (struct gdbarch *gdbarch,
-                               gdbarch_addr_bit_in_space_ftype addr_bit_in_space)
-{
-  gdbarch->addr_bit_in_space = addr_bit_in_space;
-}
-
-int
-gdbarch_addr_byte_in_space (struct gdbarch *gdbarch, struct type *type)
-{
-  gdb_assert (gdbarch != NULL);
-  gdb_assert (gdbarch->addr_byte_in_space != NULL);
-  if (gdbarch_debug >= 2)
-    fprintf_unfiltered (gdb_stdlog, "gdbarch_addr_byte_in_space called\n");
-  return gdbarch->addr_byte_in_space (gdbarch, type);
-}
-
-void
-set_gdbarch_addr_byte_in_space (struct gdbarch *gdbarch,
-                                gdbarch_addr_byte_in_space_ftype addr_byte_in_space)
-{
-  gdbarch->addr_byte_in_space = addr_byte_in_space;
 }
 
 int

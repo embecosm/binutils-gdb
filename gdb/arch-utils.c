@@ -832,20 +832,6 @@ default_ptr_byte_in_space (struct gdbarch *gdbarch, struct type *type)
   return (bits + TARGET_CHAR_BIT - 1) / TARGET_CHAR_BIT;
 }
 
-int
-default_addr_bit_in_space (struct gdbarch *gdbarch, struct type *type)
-{
-  return gdbarch_addr_bit (gdbarch);
-}
-
-int
-default_addr_byte_in_space (struct gdbarch *gdbarch, struct type *type)
-{
-  int bits = gdbarch_addr_bit (gdbarch);
-  return (bits + TARGET_CHAR_BIT - 1) / TARGET_CHAR_BIT;
-}
-
-
 /* */
 
 /* -Wmissing-prototypes */

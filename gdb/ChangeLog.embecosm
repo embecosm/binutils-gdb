@@ -5,15 +5,9 @@
 	* gdbarch.sh: Add struct type to generated gdbarch.h.
 	(ptr_bit_in_space): New multi-arch function.
 	(ptr_byte_in_space): New multi-arch function.
-	(addr_bit_in_space): New multi-arch function.
-	(addr_byte_in_space): New multi-arch function.
 	* arch-utils.h (default_ptr_bit_in_space): Declaration of new function.
 	(default_ptr_byte_in_space): Likewise.
-	(default_addr_bit_in_space): Likewise.
-	(default_addr_byte_in_space): Likewise.
 	* arch-utils.c (default_ptr_bit_in_space): New function.
 	(default_ptr_byte_in_space): Likewise.
-	(default_addr_bit_in_space): Likewise.
-	(default_addr_byte_in_space): Likewise.
 	* gdbarch.c, gdbarch.h: Regenerate.
 

@@ -423,31 +423,23 @@ v:int:addr_bit:::8 * sizeof (void*):0:gdbarch_ptr_bit (gdbarch):
 # Using gdbarch_ptr_bit tells GDB that all pointers have the same size on the
 # target, regardless of their address space.
 #
-# Regarding addresses, it might be thought that they always have the same size,
-# but gdbarch_addr_bit is used for two purposes. First to say how many bits are
-# needed to address the whole unified address space and secondly to say how many
-# bits should be used when displaying an address. In this latter case the number
-# of bits matters.
-#
 # For example on AVR with its 16-bit byte addressed data space and 22-bit word
 # addressed code space, the number of bits to print out a pointer to data (16)
 # is different to the number to print out a pointer to a function (22).
 #
-# The following functions replace gdbarch_ptr_bit and gdbarch_addr_bit:
+# The following functions replace gdbarch_ptr_bit:
 #   gdbarch_ptr_bit_in_space
 #   gdbarch_ptr_byte_in_space
-#   gdbarch_addr_bit_in_space
-#   gdbarch_addr_byte_in_space
 #
-# They should be overriden to act just like gdbarch_ptr_bit and
-# gdbarch_addr_bit. However, if the target has more than one address space, the
-# space in which the pointer resides should be infered from the struct type
-# argument. And then return the size of the specific space. Calling any of
-# these with NULL_TYPE will return the appropriate maximum pointer size.
+# They should be overriden to act just like gdbarch_ptr_bit. However, if the
+# target has more than one address space, the space in which the pointer resides
+# should be infered from the struct type argument. And then return the size of
+# the specific space. Calling any of these with NULL_TYPE will return the
+# appropriate maximum pointer size.
 #
-# Byte variants were added to make code cleaner, as the result of
-# gdbarch_ptr_bit_in_space and gdbarch_addr_bit_in_space is very often used as
-# a number of bytes instead of bits.
+# A byte variant was added to make code cleaner, as the result of
+# gdbarch_ptr_bit_in_space is very often used as a number of bytes instead of
+# bits.
 #
 # Return the number of bits of pointers for a specific address space, according
 # to type.
@@ -455,12 +447,6 @@ m:int:ptr_bit_in_space:struct type *type:type:default_ptr_bit_in_space:default_p
 # gdbarch_ptr_byte_in_space should return the number of bytes into which the
 # pointer can fit in.
 m:int:ptr_byte_in_space:struct type *type:type:default_ptr_byte_in_space:default_ptr_byte_in_space::0
-# Return the number of bits of addresses for a specific address space, according
-# to type.
-m:int:addr_bit_in_space:struct type *type:type:default_addr_bit_in_space:default_addr_bit_in_space::0
-# gdbarch_addr_byte_in_space should return the number of bytes into which the
-# address can fit in.
-m:int:addr_byte_in_space:struct type *type:type:default_addr_byte_in_space:default_addr_byte_in_space::0
 # dwarf2_addr_size is the target address size as used in the Dwarf debug
 # info.  For .debug_frame FDEs, this is supposed to be the target address
 # size from the associated CU header, and which is equivalent to the
